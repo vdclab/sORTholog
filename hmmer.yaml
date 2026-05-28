@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python >= 3.9,<3.13
+  - hmmer >= 3.4

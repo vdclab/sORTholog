@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - plotly
+dependencies:
+  - python >= 3.9,<3.13
+  - pandas >= 1.4.0
+  - plotly >= 5.3.1

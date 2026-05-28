@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python >= 3.9,<3.13
+  - blast = 2.16.0
+  - biopython >= 1.79
+  - pandas >= 1.4.0
