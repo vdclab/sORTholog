@@ -4,16 +4,16 @@
  
 
 # path to seeds sheet (TSV format, columns: seed, protein_id, ...)
-seed: path/to/seeds.tsv
+seed: config/seeds.tsv
 
 # path to taxonomic id to search seeds in (TSV format, columns: TaxId, NCBIGroups)
-taxid: path/to/taxids.tsv
+taxid: config/taxids.tsv
 
 # name of the project 
-project_name: your_project_name
+project_name: validation
 
 # path to the result folder can be let empty with "" if you want where you are
-output_folder: ""
+output_folder: "results"
 
 
 #################################

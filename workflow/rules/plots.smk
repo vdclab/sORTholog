@@ -32,7 +32,7 @@ rule plots:
 
 rule user_plots:
     input:
-        final_table=config["PAtab_table"],
+        final_table=config["PAtab_table"] if config["PAtab_table"] else [],
     output:
         png=os.path.join(OUTPUT_FOLDER, "results", "plots", "user_gene_PA.png"),
         pdf=os.path.join(OUTPUT_FOLDER, "results", "plots", "user_gene_PA.pdf"),

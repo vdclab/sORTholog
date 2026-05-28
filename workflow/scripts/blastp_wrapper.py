@@ -1,14 +1,20 @@
 from Bio import SeqIO
 import argparse
 import os
+import sys
 import subprocess
 import multiprocessing as mp
 import shutil
 import pandas as pd
 from pathlib import Path
+from functools import partial
 
-# Put error and out into the log file
-sys.stderr = sys.stdout = open(snakemake.log[0], "w")
+# Put error and out into the log file (if running under Snakemake)
+try:
+    sys.stderr = sys.stdout = open(snakemake.log[0], "w")
+except NameError:
+    # Not running under Snakemake (e.g., in multiprocessing), skip log redirection
+    pass
 
 ###########################################################
 ###########################################################
@@ -103,7 +109,7 @@ def main(args):
             )
 
     pool = mp.Pool(args.job_number)
-    results = pool.map(run_job, files_to_run)
+    results = pool.map(partial(run_job, args), files_to_run)
     pool.close()
 
     df = pd.concat(results)
@@ -116,7 +122,7 @@ def main(args):
 ###########################################################
 
 
-def run_job(group_tuple):
+def run_job(args, group_tuple):
     blast_database = args.database
 
     job_str = (
