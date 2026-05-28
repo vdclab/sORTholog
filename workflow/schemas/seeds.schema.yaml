@@ -1,4 +1,4 @@
-$schema: "http://json-schema.org/draft-04/schema#"
+$schema: "https://json-schema.org/draft/2020-12/schema"
 description: row of the seeds.tsv, seeds are the genes of known annotation you want to find in genomes
 type: object
 properties:

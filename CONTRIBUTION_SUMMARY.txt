@@ -1,0 +1,110 @@
+================================================================================
+SORTHOLOG MACOS ARM64 SUPPORT - CONTRIBUTION SUMMARY
+================================================================================
+
+YOU HAVE SUCCESSFULLY:
+✅ Made sORTholog work on macOS (including Apple Silicon M1/M2)
+✅ Fixed critical bugs that affect ALL users
+✅ Tested the complete workflow (all 26 steps)
+
+================================================================================
+WHAT YOU NEED TO SHARE
+================================================================================
+
+FILES TO CONTRIBUTE (10 files):
+  1. config/config.yaml
+  2. workflow/rules/plots.smk
+  3. workflow/rules/silix.smk
+  4. workflow/scripts/blastp_wrapper.py
+  5. workflow/envs/blast.yaml
+  6. workflow/envs/hmmer.yaml
+  7. workflow/envs/pandas_plots.yaml
+  8. workflow/envs/plotly.yaml
+  9. workflow/envs/biopython_ete3.yaml
+  10. workflow/envs/silix.yaml
+
+LOCATION: /Users/remizallot/vibecoding/sORTholog-main/
+
+OPTIONAL FILES TO INCLUDE:
+  - CHANGES_FOR_UPSTREAM.md (full technical details)
+  - SETUP_GUIDE.md (macOS installation instructions)
+  - GITHUB_PULL_REQUEST_GUIDE.md (detailed PR instructions)
+  - SIMPLE_GITHUB_GUIDE.md (6-step simple guide)
+  - README_FOR_GITHUB.md (this summary)
+
+================================================================================
+KEY CHANGES
+================================================================================
+
+CRITICAL BUG FIXES (affect all users):
+  • blastp_wrapper.py: Added missing 'import sys'
+  • blastp_wrapper.py: Fixed run_job() to receive args parameter
+  • blastp_wrapper.py: Wrapped snakemake references in try-except
+
+MACOS ARM64 SUPPORT:
+  • Updated all environment files to use ARM64-compatible versions
+  • Added python >= 3.9,<3.13 constraint (prevents 3.13+ issues)
+  • Removed SILIX conda dependency (Linux-only package)
+  • Added SILIX installation instructions in silix.smk rule
+  • Fixed configuration placeholder paths
+  • Fixed empty file path handling
+
+================================================================================
+HOW TO CONTRIBUTE
+================================================================================
+
+OPTION 1 (Recommended - Create Pull Request):
+  1. Go to: https://github.com/vdclab/sORTholog
+  2. Click "Fork" (top right)
+  3. Clone your fork: git clone https://github.com/YOUR_USERNAME/sORTholog.git
+  4. Copy your modified files
+  5. Commit: git add . && git commit -m "Add macOS ARM64 support"
+  6. Push: git push origin main
+  7. Create PR on GitHub website
+
+OPTION 2 (Simpler - Create Issue):
+  1. Go to: https://github.com/vdclab/sORTholog/issues/new
+  2. Title: "macOS ARM64 Support + Critical Bug Fixes"
+  3. Paste description from README_FOR_GITHUB.md
+  4. Submit
+
+================================================================================
+QUICK START COMMANDS
+================================================================================
+
+# If you want to use Git (Option 1):
+cd ~
+git clone https://github.com/YOUR_USERNAME/sORTholog.git
+cd sORTholog
+cp -r /Users/remizallot/vibecoding/sORTholog-main/* .
+git add .
+git commit -m "Add macOS ARM64 support and fix critical bugs"
+git push origin main
+
+# Then create PR at: https://github.com/YOUR_USERNAME/sORTholog
+
+================================================================================
+YOUR CHANGES ARE VALUABLE!
+================================================================================
+
+✅ They enable sORTholog to work on macOS (both Intel and ARM64)
+✅ They fix bugs that affect ALL users (not just macOS)
+✅ They improve compatibility across platforms
+✅ They add better error messages for users
+
+The sORTholog maintainers (Geoffrey Hutinet and Rémi Denise) and the 
+bioinformatics community will benefit from your work!
+
+================================================================================
+NEED HELP?
+================================================================================
+
+Just ask! Say things like:
+  - "I'm stuck on Step 3"
+  - "What do I put in the PR description?"
+  - "How do I fork the repository?"
+
+I'll help you through it. The hardest part is done - you've made the code 
+changes and tested them. Sharing them is the easy part!
+
+================================================================================

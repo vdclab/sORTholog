@@ -45,6 +45,71 @@ conda activate snakemake
 ```
 :warning: **This command has to be used every single time you want to use sORTholog to be able to activate the conda environment that contains snakemake.**
 
+
+## 🍎 macOS Setup (Including Apple Silicon M1/M2)
+
+**Important for macOS users:** Some tools (notably SILIX) are not available via conda on macOS. Follow these additional steps:
+
+### Required: Install SILIX Manually
+
+The SILIX software (used for protein family clustering) is not available via conda for macOS. You must install it manually **before** running the workflow:
+
+#### Step 1: Install Homebrew (if not already installed)
+
+Open **Terminal** and run:
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+After installation, follow the on-screen instructions to add Homebrew to your PATH. Typically:
+```shell
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Verify with:
+```shell
+brew --version
+```
+
+#### Step 2: Install Required Dependencies
+
+```shell
+brew install boost
+```
+
+#### Step 3: Download and Install SILIX
+
+Run these commands one at a time:
+```shell
+cd /tmp
+curl -L https://pbil.univ-lyon1.fr/software/download/silix/silix-1.3.0.tar.gz -o silix-1.3.0.tar.gz
+tar -xzf silix-1.3.0.tar.gz
+cd silix-1.3.0
+CPPFLAGS="-I/opt/homebrew/include" LDFLAGS="-L/opt/homebrew/lib" ./configure
+make
+mkdir -p ~/bin
+cp src/silix ~/bin/
+chmod +x ~/bin/silix
+```
+
+#### Step 4: Add SILIX to Your PATH
+
+```shell
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Verify with:
+```shell
+silix --help
+```
+
+#### Troubleshooting
+- **Permission denied?** Run `chmod +x ~/bin/silix`
+- **Configure failed?** Ensure boost is installed: `brew install boost`
+- **Intel Mac?** Use `/usr/local/include` and `/usr/local/lib` instead of `/opt/homebrew/`
+
 ### Step 2: Deploy workflow
 
 Given that Snakemake and Snakedeploy are installed and available (see [Step 1: install Snakemake and Snakedeploy](#step-1-install-snakemake-and-snakedeploy)), the workflow can be deployed as follows.
@@ -117,17 +182,24 @@ Given that the workflow has been properly deployed and configured, it can be exe
 For running the workflow while deploying any necessary software via conda, run Snakemake with 
 
 ```shell
-snakemake --cores 1 --use-conda 
+snakemake --cores all --use-conda
 ```
 
-Here the number of used for the workflow is set to 1 but the number could be increase if needed.
+**Recommended flags:**
+- `--cores all` - Use all available CPU cores (faster)
+- `--verbose` or `-p` - Show detailed progress output
+- `--printshellcmds` - Print each command before execution
 
-If you want to run the workflow with the additional step to speedup the analysis that contains a big dataset you can either:
+Here the number of cores can be adjusted as needed (e.g., `--cores 4` for 4 cores).
+
+**Note:** Snakemake shows progress by default, displaying completed steps like `Finished jobid: X (Rule: rule_name) - Y of Z steps (A%) done`.
+
+If you want to run the workflow with the additional step to speedup the analysis for big datasets you can either:
 - Change in the `config.yaml` the parameter `speedup` and change the value to `True`
 - Run the workflow adding `-C speedup=True` to the command line as follow
 
 ```shell
-snakemake --cores 1 --use-conda -C speedup=True
+snakemake --cores all --use-conda -C speedup=True
 ```
 
 You will find the table of presence of absence `patab_table.tsv`, the melt version of this table `patab_melt.tsv` and a folder `plots` containing the figure representing the table.

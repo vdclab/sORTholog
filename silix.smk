@@ -35,43 +35,26 @@ rule silix:
             "silix",
             "{seed}_evalue_{eval}_cov_{coverage}_pid_{pid}.silix.log",
         ),
+
     shell:
         """
         # Check if silix is available
         if ! command -v silix >/dev/null 2>&1; then
-            echo "" >&2
-            echo "==========================================" >&2
-            echo "SILIX is required but not installed!" >&2
-            echo "==========================================" >&2
-            echo "" >&2
-            echo "On macOS, you must install SILIX manually:" >&2
-            echo "" >&2
-            echo "1. Install Homebrew from https://brew.sh" >&2
-            echo "2. Then run these commands:" >&2
-            echo "" >&2
-            echo "   brew install boost" >&2
-            echo "   cd /tmp" >&2
-            echo "   curl -L https://pbil.univ-lyon1.fr/software/download/silix/silix-1.3.0.tar.gz -o silix-1.3.0.tar.gz" >&2
-            echo "   tar -xzf silix-1.3.0.tar.gz" >&2
-            echo "   cd silix-1.3.0" >&2
-            echo "   CPPFLAGS=\"-I/opt/homebrew/include\" LDFLAGS=\"-L/opt/homebrew/lib\" ./configure" >&2
-            echo "   make" >&2
-            echo "   mkdir -p ~/bin" >&2
-            echo "   cp src/silix ~/bin/" >&2
-            echo "   chmod +x ~/bin/silix" >&2
-            echo "   echo 'export PATH=\"\$HOME/bin:\$PATH\"' >> ~/.zshrc" >&2
-            echo "   source ~/.zshrc" >&2
-            echo "" >&2
-            echo "Then re-run this workflow." >&2
-            echo "==========================================" >&2
+            echo "ERROR: silix command not found." >&2
+            echo "On macOS, install SILIX with:" >&2
+            echo "  brew install boost" >&2
+            echo "  cd /tmp && curl -L https://pbil.univ-lyon1.fr/software/download/silix/silix-1.3.0.tar.gz | tar xz" >&2
+            echo "  cd silix-1.3.0 && CPPFLAGS=\"-I/opt/homebrew/include\" LDFLAGS=\"-L/opt/homebrew/lib\" ./configure" >&2
+            echo "  make && cp src/silix ~/bin/ && chmod +x ~/bin/silix" >&2
+            echo "  echo 'export PATH=\"$HOME/bin:$PATH\"' >> ~/.zshrc && source ~/.zshrc" >&2
             exit 1
         fi
         
         if [ -s {input.blast_out} ]
         then   
-            sh -c 'silix "{input.fasta}" "{input.blast_out}" -f "{wildcards.seed}"\
+            silix "{input.fasta}" "{input.blast_out}" -f "{wildcards.seed}"\
                -i "{wildcards.pid}" -r "{wildcards.coverage}" -q "{params.minimum_overlap}"\
-               -s "{params.minimum_percId}" -l "{params.minimum_length}" > "{output}" 2> {log}'
+               -s "{params.minimum_percId}" -l "{params.minimum_length}" > "{output}" 2> {log}
         else
             touch '{output}'
         fi

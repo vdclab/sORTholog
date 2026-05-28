@@ -10,7 +10,7 @@ seed: config/seeds.tsv
 taxid: config/taxids.tsv
 
 # name of the project 
-project_name: validation
+project_name: sORTholog_test
 
 # path to the result folder can be let empty with "" if you want where you are
 output_folder: "results"

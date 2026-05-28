@@ -1,20 +1,12 @@
 from Bio import SeqIO
+import sys
 import argparse
 import os
-import sys
 import subprocess
 import multiprocessing as mp
 import shutil
 import pandas as pd
 from pathlib import Path
-from functools import partial
-
-# Put error and out into the log file (if running under Snakemake)
-try:
-    sys.stderr = sys.stdout = open(snakemake.log[0], "w")
-except NameError:
-    # Not running under Snakemake (e.g., in multiprocessing), skip log redirection
-    pass
 
 ###########################################################
 ###########################################################
@@ -45,20 +37,41 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     # Positional mandatory arguments
+    # Try to use Snakemake variables, fall back to None if not available
+    try:
+        in_fasta = snakemake.input.fasta_for_blast
+    except NameError:
+        in_fasta = None
+    
+    try:
+        out_file = snakemake.output.blast_out
+    except NameError:
+        out_file = None
+    
+    try:
+        tmp_dir = snakemake.params.tmp_output
+    except NameError:
+        tmp_dir = None
+    
+    try:
+        threads = snakemake.threads
+    except NameError:
+        threads = 1
+
     parser.add_argument(
-        "--in_fasta_file", help="input_fasta", type=str, default=snakemake.input.fasta_for_blast
+        "--in_fasta_file", help="input_fasta", type=str, default=in_fasta
     )
     parser.add_argument(
-        "--outfile", help="output_folder", type=str, default=snakemake.output.blast_out
+        "--outfile", help="output_folder", type=str, default=out_file
     )
     parser.add_argument(
-        "--tmp_dir", help="tmp folder", type=str, default=snakemake.params.tmp_output
+        "--tmp_dir", help="tmp folder", type=str, default=tmp_dir
     )
     parser.add_argument(
         "--database",
         help="The name of the database or empty if remote blast",
         type=str,
-        default=snakemake.input.fasta_for_blast,
+        default=in_fasta,
     )
     parser.add_argument(
         "--seqs_per_file",
@@ -66,7 +79,7 @@ def parse_args():
         type=int,
         default=3250,
     )
-    parser.add_argument("--job_number", type=int, default=snakemake.threads)
+    parser.add_argument("--job_number", type=int, default=threads)
     # Parse arguments
     args = parser.parse_args()
 
@@ -77,6 +90,12 @@ def parse_args():
 
 
 def main(args):
+    # Redirect stderr and stdout to log file
+    try:
+        sys.stderr = sys.stdout = open(snakemake.log[0], "w")
+    except NameError:
+        # snakemake object not available (running outside Snakemake)
+        pass
 
     # split the input file
     record_iter = SeqIO.parse(open(args.in_fasta_file), "fasta")
@@ -109,7 +128,9 @@ def main(args):
             )
 
     pool = mp.Pool(args.job_number)
-    results = pool.map(partial(run_job, args), files_to_run)
+    # Pass args to run_job via partial function
+    from functools import partial
+    results = pool.map(partial(run_job, args=args), files_to_run)
     pool.close()
 
     df = pd.concat(results)
@@ -122,7 +143,7 @@ def main(args):
 ###########################################################
 
 
-def run_job(args, group_tuple):
+def run_job(group_tuple, args):
     blast_database = args.database
 
     job_str = (
